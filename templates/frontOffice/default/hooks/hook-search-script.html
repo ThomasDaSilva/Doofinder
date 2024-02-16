@@ -1,0 +1,19 @@
+{if $basic_input}
+    <input type="text" id="{$query_input_id}">
+{/if}
+
+<script>
+    var doofinder_script ='//cdn.doofinder.com/media/js/doofinder-classic.7.latest.min.js';
+    (function(d,t){
+            f=d.createElement(t);
+            s=d.getElementsByTagName(t)[0];f.async=1;
+            f.src=('https:'==location.protocol?'https:':'http:')+doofinder_script;
+            f.setAttribute('charset','utf-8');
+            s.parentNode.insertBefore(f,s)}(document,'script')
+    );
+    var dfClassicLayers = [{
+        hashid: '{$hash_ID}',
+        zone: '{$search_zone}',
+        queryInput: '#{$query_input_id}'
+    }];
+</script>
