@@ -13,23 +13,23 @@ class Doofinder extends BaseModule
     public const DOMAIN_NAME = 'doofinder';
 
     // Doofinder Configuration
-    public const DOOFINDER_SEARCH_ZONE = 'doofinder_search_zone';
-    public const DOOFINDER_HASH_ID = 'doofinder_hash_id';
-    public const DOOFINDER_USER_TOKEN = 'doofinder_user_token';
-    public const DOOFINDER_USER_ID = 'doofinder_user_id';
+    public const DOOFINDER_SEARCH_ZONE_CONFIG_KEY = 'doofinder_search_zone';
+    public const DOOFINDER_HASH_ID_CONFIG_KEY = 'doofinder_hash_id';
+    public const DOOFINDER_USER_TOKEN_CONFIG_KEY = 'doofinder_user_token';
+    public const DOOFINDER_USER_ID_CONFIG_KEY = 'doofinder_user_id';
 
     // Doofinder Search Engine Setting
-    public const DOOFINDER_SEARCH_ENGINE = 'doofinder_search_engine';
-    public const DOOFINDER_SEARCH_ENGINE_LANG = 'doofinder_search_engine_lang';
-    public const DOOFINDER_SEARCH_ENGINE_STATUS = 'doofinder_search_engine_status';
-    public const DOOFINDER_SEARCH_ENGINE_CURRENCY = 'doofinder_search_engine_currency';
-    public const DOOFINDER_SEARCH_ENGINE_FEED = 'doofinder_search_engine_feed';
+    public const DOOFINDER_SEARCH_ENGINE_CONFIG_KEY = 'doofinder_search_engine';
+    public const DOOFINDER_SEARCH_ENGINE_LANG_CONFIG_KEY = 'doofinder_search_engine_lang';
+    public const DOOFINDER_SEARCH_ENGINE_STATUS_CONFIG_KEY = 'doofinder_search_engine_status';
+    public const DOOFINDER_SEARCH_ENGINE_CURRENCY_CONFIG_KEY = 'doofinder_search_engine_currency';
+    public const DOOFINDER_SEARCH_ENGINE_FEED_CONFIG_KEY = 'doofinder_search_engine_feed';
 
 
     // Doofinder Front Hooks
-    public const DOOFINDER_HOOK_SEARCH_SCRIPT = 'doofinder_hook_search_script';
-    public const DOOFINDER_BASIC_SEARCH_BAR = 'doofinder_basic_search_bar';
-    public const DOOFINDER_QUERY_INPUT_ID = 'doofinder_query_input_id';
+    public const DOOFINDER_HOOK_SEARCH_SCRIPT_CONFIG_KEY = 'doofinder_hook_search_script';
+    public const DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY = 'doofinder_basic_search_bar';
+    public const DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY = 'doofinder_query_input_id';
 
 
     /*
