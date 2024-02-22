@@ -11,6 +11,7 @@ use Thelia\Module\BaseModule;
 class Doofinder extends BaseModule
 {
     public const DOMAIN_NAME = 'doofinder';
+    public const DOOFINDER_URL = 'https://%s-api.doofinder.com';
 
     // Doofinder Configuration
     public const DOOFINDER_SEARCH_ZONE_CONFIG_KEY = 'doofinder_search_zone';
@@ -25,12 +26,15 @@ class Doofinder extends BaseModule
     public const DOOFINDER_SEARCH_ENGINE_CURRENCY_CONFIG_KEY = 'doofinder_search_engine_currency';
     public const DOOFINDER_SEARCH_ENGINE_FEED_CONFIG_KEY = 'doofinder_search_engine_feed';
 
-
     // Doofinder Front Hooks
     public const DOOFINDER_HOOK_SEARCH_SCRIPT_CONFIG_KEY = 'doofinder_hook_search_script';
     public const DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY = 'doofinder_basic_search_bar';
     public const DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY = 'doofinder_query_input_id';
 
+    // Doofinder product state synchronize
+    public const DOOFINDER_STATE_CREATED = "created";
+    public const DOOFINDER_STATE_UPDATED = "updated";
+    public const DOOFINDER_STATE_DELETED = "deleted";
 
     /*
      * You may now override BaseModuleInterface methods, such as:

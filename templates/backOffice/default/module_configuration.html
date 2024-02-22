@@ -110,6 +110,14 @@
 
                                 <a href="https://admin.doofinder.com/admin">{intl l="Doofinder admin interface" d='doofinder.bo.default'}</a>
 
+                                {if $smarty.get.sync|default:null === "success"}
+                                    <div class="alert alert-success">{intl l="Syncronization success" d='doofinder.bo.default'}</div>
+                                {/if}
+
+                                {if $smarty.get.sync|default:null === "failed"}
+                                    <div class="alert alert-danger">{intl l="Syncronization failed" d='doofinder.bo.default'}</div>
+                                {/if}
+
                                 <div>
                                     {intl l="URL product feeds" d='doofinder.bo.default'} :
                                     <ul>
@@ -144,6 +152,8 @@
                                         </tr>
                                         </tbody>
                                     </table>
+
+                                    <a href="/admin/module/Doofinder/sync/all" class="btn btn-success {if !$search_engine_status} disabled {/if}">{intl l="Syncronize all products" d="doofinder.bo.default"}</a>
                                 </div>
                             </div>
                         </div>

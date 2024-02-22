@@ -76,9 +76,16 @@ There are three other parameters you probably will want to customize:
 
 If you decide to put the search box included with this plugin for the top of the page, you probably will have to adjust these parameters. Remember to do it for each script.
 
-## Work-in-progress
+## Synchronize your product with Doofinder
 Doofinder needs your product information to be read from a data file located in a public web URL.
-This part is in work in progress
+This module is working with the API to send you product information and make statistics
+
+To synchronize your products,
+you can use the button in the module back-office or synchronize one by saving him 
+or use this command : 
+```shell
+php Thelia module:Doofinder:Synchronize
+```
 
 ## Documentation
 
