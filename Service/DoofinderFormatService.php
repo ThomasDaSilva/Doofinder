@@ -30,7 +30,7 @@ class DoofinderFormatService
 
         return [
             'availability' => $this->getAvailability($product->getVisible()),
-            'brand' => (string)$product->getBrandId(),
+            'brand' => (string)$product->getBrand()?->setLocale($locale)->getTitle(),
             'categories' => $categories,
             'description' => $product->getDescription(),
             'group_id' => (string)$product->getId(),

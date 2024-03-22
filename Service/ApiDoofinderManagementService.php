@@ -9,6 +9,7 @@ use Doofinder\Management\ManagementClient;
 use Doofinder\Shared\Exceptions\ApiException;
 use Propel\Runtime\Exception\PropelException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Thelia\Model\ProductSaleElements;
 
 class ApiDoofinderManagementService
 {
@@ -31,23 +32,14 @@ class ApiDoofinderManagementService
     }
 
     /**
-     * @throws ApiException
-     */
-    public function getSearchEngine(): ?array
-    {
-        $response = $this->managementClient->getSearchEngine(Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY));
-
-        return $response->getBody()->jsonSerialize();
-    }
-
-    /**
      * @throws PropelException|ApiException
      */
-    public function createDoofinderProductInBulk($productSaleElements)
+    public function createDoofinderProductInBulk(array $productSaleElementss)
     {
         $itemParams = [];
 
-        foreach ($productSaleElements as $pse) {
+        /** @var ProductSaleElements $pse */
+        foreach ($productSaleElementss as $pse) {
             $itemParams[] = $this->formatService->formatIndexImport($pse);
         }
 
@@ -66,11 +58,12 @@ class ApiDoofinderManagementService
     /**
      * @throws PropelException|ApiException
      */
-    public function deleteDoofinderProductInBulk($productSaleElements)
+    public function deleteDoofinderProductInBulk(array $productSaleElementss)
     {
         $itemParams = [];
 
-        foreach ($productSaleElements as $pse) {
+        /** @var ProductSaleElements $pse */
+        foreach ($productSaleElementss as $pse) {
             $itemParams[] = $this->formatService->formatIndexImport($pse);
         }
 
@@ -81,5 +74,26 @@ class ApiDoofinderManagementService
         );
 
         return $response->getBody();
+    }
+
+    /**
+     * @throws ApiException
+     */
+    public static function getSearchEngine(): ?array
+    {
+        $host = sprintf(
+            Doofinder::DOOFINDER_URL,
+            Doofinder::getConfigValue(Doofinder::DOOFINDER_SEARCH_ZONE_CONFIG_KEY) ?? "eu1",
+        );
+
+        $managementClient = ManagementClient::create(
+            $host,
+            Doofinder::getConfigValue(Doofinder::DOOFINDER_USER_TOKEN_CONFIG_KEY),
+            Doofinder::getConfigValue(Doofinder::DOOFINDER_USER_ID_CONFIG_KEY)
+        );
+
+        $response = $managementClient->getSearchEngine(Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY));
+
+        return $response->getBody()->jsonSerialize();
     }
 }

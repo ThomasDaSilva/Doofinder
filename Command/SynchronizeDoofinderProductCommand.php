@@ -24,7 +24,7 @@ class SynchronizeDoofinderProductCommand extends ContainerAwareCommand
     public function configure(): void
     {
         $this
-            ->setName('module:Doofinder:Synchronize')
+            ->setName('module:doofinder:synchronize')
             ->setDescription('Synchronize product with Doofinder API');
     }
 

@@ -148,7 +148,12 @@
                                             <td>{$search_engine_server}</td>
                                             <td>{$search_engine_hash_id}</td>
                                             <td>{$search_engine_currency}</td>
-                                            <td><input type="checkbox" {if $search_engine_status} checked{/if}></td>
+                                            <td>{if $search_engine_status}
+                                                    {intl l="Activated" d='doofinder.bo.default'}
+                                                {else}
+                                                    {intl l="Disabled" d='doofinder.bo.default'}
+                                                {/if}
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>

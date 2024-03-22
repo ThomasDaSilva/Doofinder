@@ -34,27 +34,9 @@ class ConfigurationController extends AdminController
             Doofinder::setConfigValue(Doofinder::DOOFINDER_USER_ID_CONFIG_KEY, $data["user_id"]);
             Doofinder::setConfigValue(Doofinder::DOOFINDER_USER_TOKEN_CONFIG_KEY, $data["user_token"]);
 
-            $searchEngine = $apiDoofinderManagementService->getSearchEngine();
-
-            Doofinder::setConfigValue(Doofinder::DOOFINDER_SEARCH_ENGINE_CONFIG_KEY, $searchEngine['name']);
-            Doofinder::setConfigValue(Doofinder::DOOFINDER_SEARCH_ENGINE_CURRENCY_CONFIG_KEY, $searchEngine['currency']);
-            Doofinder::setConfigValue(Doofinder::DOOFINDER_SEARCH_ENGINE_STATUS_CONFIG_KEY, !$searchEngine['inactive']);
-            Doofinder::setConfigValue(Doofinder::DOOFINDER_SEARCH_ENGINE_LANG_CONFIG_KEY, $searchEngine['language']);
-
-            $indices = [];
-            foreach ($searchEngine['indices'] as $indice) {
-                foreach ($indice['datasources'] as $datasource) {
-                    $indices[$indice['name']][] = $datasource['options']['url'];
-                }
-            }
-
-            Doofinder::setConfigValue(Doofinder::DOOFINDER_SEARCH_ENGINE_FEED_CONFIG_KEY, json_encode($indices, JSON_THROW_ON_ERROR));
-
             return $this->generateSuccessRedirect($form);
         } catch (FormValidationException $e) {
             $errorMessage = $this->createStandardFormValidationErrorMessage($e);
-        } catch (ApiException) {
-            $errorMessage = Translator::getInstance()->trans('Search Engine cannot be found for this configuration');
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();
         }

@@ -1,11 +1,14 @@
 <?php
 
 return array(
+    'Activated' => 'Activé',
     'Configuration' => 'Configuration',
     'Currency' => 'Devise',
+    'Disabled' => 'Désactivé',
     'Doofinder Search Engine' => 'Moteur de recherche Doofinder',
     'Doofinder Server configuration' => 'Configuration du serveur Doofinder',
     'Doofinder User configuration' => 'Configuration de l\'utilisateur Doofinder',
+    'Doofinder admin interface' => 'Interface Administrateur Doofinder',
     'Doofinder configuration' => 'Configuration Doofinder',
     'Front Hooks' => 'Point d\'accroche en front-office',
     'Hash ID' => 'Hash ID',
@@ -15,5 +18,8 @@ return array(
     'Search Engine' => 'Moteur de recherche',
     'Server' => 'Serveur',
     'Status' => 'Statut',
+    'Syncronization failed' => 'Synchronization échouée',
+    'Syncronization success' => 'Synchronization réussie',
+    'Syncronize all products' => 'Synchroniser tous les produits',
     'URL product feeds' => 'Url du flux produits',
 );
