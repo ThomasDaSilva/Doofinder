@@ -84,8 +84,13 @@ To synchronize your products,
 you can use the button in the module back-office or synchronize one by saving him 
 or use this command : 
 ```shell
-php Thelia module:Doofinder:Synchronize
+php Thelia module:doofinder:synchronize
 ```
+
+Notes: 
+- Inactive products and Exclude products are not sent to Doofinder
+- You can exclude a product by checking the checkbox on your product Bo page
+- Everytime you are updating your product, it will be synchronized with Doofinder
 
 ## Documentation
 

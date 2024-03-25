@@ -5,16 +5,25 @@ namespace Doofinder\Service;
 use Doofinder\Doofinder;
 use Propel\Runtime\Exception\PropelException;
 use Thelia\Log\Tlog;
+use Thelia\Model\Country;
 use Thelia\Model\LangQuery;
 use Thelia\Model\Product;
-use Thelia\Model\ProductPrice;
 use Thelia\Model\ProductPriceQuery;
 use Thelia\Model\ProductSaleElements;
-use Thelia\Model\RewritingUrlQuery;
+use Thelia\Model\TaxRule;
+use Thelia\TaxEngine\Calculator;
+use Thelia\TaxEngine\TaxEngine;
 use Thelia\Tools\URL;
 
 class DoofinderFormatService
 {
+    public function __construct(
+        protected TaxEngine $taxEngine
+    )
+    {
+    }
+
+
     /**
      * @throws PropelException
      */
@@ -29,8 +38,8 @@ class DoofinderFormatService
         }
 
         return [
-            'availability' => $this->getAvailability($product->getVisible()),
-            'brand' => (string)$product->getBrandId(),
+            'availability' => $this->getAvailability($productSaleElements->getQuantity()),
+            'brand' => (string)$product->getBrand()?->setLocale($locale)->getTitle(),
             'categories' => $categories,
             'description' => $product->getDescription(),
             'group_id' => (string)$product->getId(),
@@ -39,17 +48,31 @@ class DoofinderFormatService
             'image_link' => $this->getImageLink($product),
             'link' => $this->getProductLink($product, $locale),
             //'mpn' => '', //référence fabricant ?
-            'best_price' => (string)$this->getPseProductPrice($productSaleElements->getId())?->getPromoPrice(),
-            'sale_price' => (string)$this->getPseProductPrice($productSaleElements->getId())?->getPrice(),
+            'best_price' => (string)$this->getPseProductPrice($productSaleElements->getId(), $product->getTaxRule(), true),
+            'sale_price' => (string)$this->getPseProductPrice($productSaleElements->getId(), $product->getTaxRule()),
             'title' => $product->setLocale($locale)->getTitle(),
         ];
     }
 
     public function formatResponse(array $results): string
     {
+        $output = "";
+
+        if (isset($results[Doofinder::DOOFINDER_STATE_CREATED_UPDATED])) {
+            $output .= $this->formatAddedUpdatedResponse($results[Doofinder::DOOFINDER_STATE_CREATED_UPDATED]);
+        }
+
+        if (isset($results[Doofinder::DOOFINDER_STATE_DELETED])) {
+            $output .= $this->formatDeletedResponse($results[Doofinder::DOOFINDER_STATE_DELETED]);
+        }
+
+        return $output;
+    }
+
+    public function formatAddedUpdatedResponse(array $results): string
+    {
         $productsAdded = 0;
         $productsUpdated = 0;
-        $productsDeleted = 0;
 
         foreach ($results['results'] as $product) {
             if ($product["result"] === Doofinder::DOOFINDER_STATE_CREATED) {
@@ -58,12 +81,25 @@ class DoofinderFormatService
             if ($product["result"] === Doofinder::DOOFINDER_STATE_UPDATED) {
                 $productsUpdated++;
             }
+        }
+
+        $output = sprintf("product created : %s, product updated : %s\n", $productsAdded, $productsUpdated);
+        Tlog::getInstance()->info($output);
+
+        return $output;
+    }
+
+    public function formatDeletedResponse(array $results): string
+    {
+        $productsDeleted = 0;
+
+        foreach ($results['results'] as $product) {
             if ($product["result"] === Doofinder::DOOFINDER_STATE_DELETED) {
                 $productsDeleted++;
             }
         }
 
-        $output = sprintf("product created : %s, product updated : %s, product deleted : %s ", $productsAdded, $productsUpdated, $productsDeleted);
+        $output = sprintf("product deleted : %s \n", $productsDeleted);
         Tlog::getInstance()->info($output);
 
         return $output;
@@ -77,22 +113,34 @@ class DoofinderFormatService
         $url = THELIA_LOCAL_DIR . 'media' . DS . 'product' . DS;
         return URL::getInstance()->absoluteUrl($url . $product->getProductImages()->getFirst()?->getFile());
     }
-
-    private function getAvailability(bool $visible): string
+    private function getAvailability(float $quantity): string
     {
-        if ($visible) {
+        if ($quantity > 0) {
             return "in stock";
         }
 
         return "out of stock";
     }
-    private function getPseProductPrice(int $pseId): ?ProductPrice
+    /**
+     * @throws PropelException
+     */
+    private function getPseProductPrice(int $pseId, TaxRule $taxRule, bool $isPromo = false): float|int
     {
-        return ProductPriceQuery::create()
-            ->useCurrencyQuery()
-            ->filterByCode(Doofinder::getConfigValue(Doofinder::DOOFINDER_SEARCH_ENGINE_CURRENCY_CONFIG_KEY))
-            ->endUse()
-            ->findOneByProductSaleElementsId($pseId);
+        $calculator = new Calculator();
+
+        $calculator->loadTaxRuleWithoutProduct(
+            $taxRule,
+            Country::getShopLocation()
+        );
+
+        $productPrice = ProductPriceQuery::create()->findOneByProductSaleElementsId($pseId);
+
+        $price = $productPrice?->getPrice();
+        if ($isPromo) {
+            $price = $productPrice?->getPromoPrice();
+        }
+
+        return $calculator->getTaxedPrice($price);
     }
     private function getProductLink(Product $product, string $locale): ?string
     {

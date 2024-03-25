@@ -20,6 +20,7 @@
                             <li class="{if $tab eq "config"}active{/if}"><a data-toggle="tab" href="#config">{intl l="Configuration" d='doofinder.bo.default'}</a> </li>
                             <li class="{if $tab eq "engine"}active{/if}"><a data-toggle="tab" href="#engine">{intl l="Search Engine" d='doofinder.bo.default'}</a> </li>
                             <li class="{if $tab eq "front_hooks"}active{/if}"><a data-toggle="tab" href="#front_hooks">{intl l="Front Hooks" d='doofinder.bo.default'}</a> </li>
+                            <li class="{if $tab eq "excluded"}active{/if}"><a data-toggle="tab" href="#excluded">{intl l="Excluded Product" d='doofinder.bo.default'}</a> </li>
                         </ul>
 
                         <div class="tab-content">
@@ -67,6 +68,19 @@
                                         </div>
                                     </form>
                                 {/form}
+                            </div>
+
+                            <div id="excluded" class="tab-pane {if $tab eq "excluded"}active{/if} form-container">
+                                <br>
+
+                                <ul>
+                                    {loop type="product" name="doofinder_excluded_product" is_excluded=true}
+                                        <li>
+                                            {$TITLE}
+                                            <a href="{url path="/admin/products/update?product_id=$ID"}" target="_blank">({$REF})</a>
+                                        </li>
+                                    {/loop}
+                                </ul>
                             </div>
 
                             <div id="front_hooks" class="tab-pane {if $tab eq "front_hooks"}active{/if} form-container">
@@ -148,7 +162,12 @@
                                             <td>{$search_engine_server}</td>
                                             <td>{$search_engine_hash_id}</td>
                                             <td>{$search_engine_currency}</td>
-                                            <td><input type="checkbox" {if $search_engine_status} checked{/if}></td>
+                                            <td>{if $search_engine_status}
+                                                    {intl l="Activated" d='doofinder.bo.default'}
+                                                {else}
+                                                    {intl l="Disabled" d='doofinder.bo.default'}
+                                                {/if}
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>

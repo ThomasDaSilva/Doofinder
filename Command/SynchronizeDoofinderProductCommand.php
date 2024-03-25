@@ -10,12 +10,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Thelia\Command\ContainerAwareCommand;
 use Thelia\Log\Tlog;
-use Thelia\Model\ProductSaleElementsQuery;
 
 class SynchronizeDoofinderProductCommand extends ContainerAwareCommand
 {
     public function __construct(
-        protected ApiDoofinderManagementService $service,
+        protected ApiDoofinderManagementService $apiDoofinderManagementService,
         protected DoofinderFormatService $formatService
     ) {
         parent::__construct();
@@ -24,7 +23,7 @@ class SynchronizeDoofinderProductCommand extends ContainerAwareCommand
     public function configure(): void
     {
         $this
-            ->setName('module:Doofinder:Synchronize')
+            ->setName('module:doofinder:synchronize')
             ->setDescription('Synchronize product with Doofinder API');
     }
 
@@ -35,9 +34,7 @@ class SynchronizeDoofinderProductCommand extends ContainerAwareCommand
         $output->write("Product synchronization start\n");
 
         try {
-            $productSaleElements = ProductSaleElementsQuery::create()->find();
-
-            $results = $this->service->createDoofinderProductInBulk($productSaleElements);
+            $results = $this->apiDoofinderManagementService->synchronizeDoofinderProducts();
 
             $output->write($this->formatService->formatResponse($results));
         } catch (ApiException|PropelException $e) {

@@ -9,6 +9,8 @@ use Doofinder\Management\ManagementClient;
 use Doofinder\Shared\Exceptions\ApiException;
 use Propel\Runtime\Exception\PropelException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Thelia\Model\ProductSaleElements;
+use Thelia\Model\ProductSaleElementsQuery;
 
 class ApiDoofinderManagementService
 {
@@ -31,26 +33,133 @@ class ApiDoofinderManagementService
     }
 
     /**
+     * @throws PropelException
      * @throws ApiException
      */
-    public function getSearchEngine(): ?array
+    public function synchronizeDoofinderProducts(int $productId = null): array
     {
-        $response = $this->managementClient->getSearchEngine(Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY));
+        $results = [];
 
-        return $response->getBody()->jsonSerialize();
+        $itemParamsUpdated = $this->buildItemParam(Doofinder::DOOFINDER_STATE_CREATED_UPDATED, $productId);
+        $itemParamsDeleted = $this->buildItemParam(Doofinder::DOOFINDER_STATE_DELETED, $productId);
+
+        if ($itemParamsUpdated !== []) {
+            $results[Doofinder::DOOFINDER_STATE_CREATED_UPDATED] = $this->createDoofinderProductInBulk($itemParamsUpdated);
+        }
+        if ($itemParamsDeleted !== []) {
+            $results[Doofinder::DOOFINDER_STATE_DELETED] = $this->deleteDoofinderProductInBulk($itemParamsDeleted);
+        }
+
+        return $results;
     }
 
     /**
-     * @throws PropelException|ApiException
+     * @throws PropelException
+     * @throws ApiException
      */
-    public function createDoofinderProductInBulk($productSaleElements)
+    public function addDoofinderProductSaleElementss(ProductSaleElements $productSaleElements): array
+    {
+        $itemParamsUpdated = $this->formatService->formatIndexImport($productSaleElements);
+
+        return $this->createDoofinderProductInBulk($itemParamsUpdated);
+    }
+
+    /**
+     * @throws ApiException
+     * @throws PropelException
+     */
+    public function deleteDoofinderProducts(int $productId = null): array
+    {
+        $itemParamsDeleted = $this->buildItemParam(Doofinder::DOOFINDER_STATE_DELETED, $productId);
+
+        return $this->deleteDoofinderProductInBulk($itemParamsDeleted);
+    }
+
+    /**
+     * @throws ApiException
+     * @throws PropelException
+     */
+    public function deleteDoofinderProductSaleElementss(ProductSaleElements $productSaleElements)
+    {
+        $itemParamsDeleted = $this->formatService->formatIndexImport($productSaleElements);
+
+        return $this->deleteDoofinderProductInBulk($itemParamsDeleted);
+    }
+
+
+
+    /**
+     * @throws PropelException
+     */
+    public function buildItemParam(string $type, int $productId = null): array
     {
         $itemParams = [];
+        $productSaleElementss = [];
 
-        foreach ($productSaleElements as $pse) {
-            $itemParams[] = $this->formatService->formatIndexImport($pse);
+        if (null !== $productId) {
+            if ($type === Doofinder::DOOFINDER_STATE_CREATED_UPDATED) {
+                $productSaleElementss = ProductSaleElementsQuery::create()
+                    ->useProductQuery()
+                    ->filterById($productId)
+                    ->filterByVisible(1)
+                    ->useDoofinderExcludedProductNotExistsQuery()
+                    ->endUse()
+                    ->endUse()
+                    ->find()
+                ;
+            }
+
+            if ($type === Doofinder::DOOFINDER_STATE_DELETED) {
+                $productSaleElementss = ProductSaleElementsQuery::create()
+                    ->useProductQuery()
+                    ->filterById($productId)
+                    ->filterByVisible(0)
+                    ->_or()
+                    ->useDoofinderExcludedProductExistsQuery()
+                    ->endUse()
+                    ->endUse()
+                    ->find();
+            }
         }
 
+        if (null === $productId) {
+            if ($type === Doofinder::DOOFINDER_STATE_CREATED_UPDATED) {
+                $productSaleElementss = ProductSaleElementsQuery::create()
+                    ->useProductQuery()
+                    ->filterByVisible(1)
+                    ->useDoofinderExcludedProductNotExistsQuery()
+                    ->endUse()
+                    ->endUse()
+                    ->find()
+                ;
+            }
+
+            if ($type === Doofinder::DOOFINDER_STATE_DELETED) {
+                $productSaleElementss = ProductSaleElementsQuery::create()
+                    ->useProductQuery()
+                    ->filterByVisible(0)
+                    ->_or()
+                    ->useDoofinderExcludedProductExistsQuery()
+                    ->endUse()
+                    ->endUse()
+                    ->find()
+                ;
+            }
+        }
+
+        /** @var ProductSaleElements $productSaleElements */
+        foreach ($productSaleElementss as $productSaleElements) {
+            $itemParams[] = $this->formatService->formatIndexImport($productSaleElements);
+        }
+
+        return $itemParams;
+    }
+
+    /**
+     * @throws ApiException
+     */
+    public function createDoofinderProductInBulk(array $itemParams)
+    {
         $event = new DoofinderItemParamEvent($itemParams);
         $this->eventDispatcher->dispatch($event, DoofinderItemParamEvents::DOOFINDER_ITEM_PARAM);
 
@@ -64,16 +173,10 @@ class ApiDoofinderManagementService
     }
 
     /**
-     * @throws PropelException|ApiException
+     * @throws ApiException
      */
-    public function deleteDoofinderProductInBulk($productSaleElements)
+    public function deleteDoofinderProductInBulk(array $itemParams)
     {
-        $itemParams = [];
-
-        foreach ($productSaleElements as $pse) {
-            $itemParams[] = $this->formatService->formatIndexImport($pse);
-        }
-
         $response = $this->managementClient->deleteItemsInBulk(
             Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY),
             "product",
@@ -81,5 +184,26 @@ class ApiDoofinderManagementService
         );
 
         return $response->getBody();
+    }
+
+    /**
+     * @throws ApiException
+     */
+    public static function getSearchEngine(): ?array
+    {
+        $host = sprintf(
+            Doofinder::DOOFINDER_URL,
+            Doofinder::getConfigValue(Doofinder::DOOFINDER_SEARCH_ZONE_CONFIG_KEY) ?? "eu1",
+        );
+
+        $managementClient = ManagementClient::create(
+            $host,
+            Doofinder::getConfigValue(Doofinder::DOOFINDER_USER_TOKEN_CONFIG_KEY),
+            Doofinder::getConfigValue(Doofinder::DOOFINDER_USER_ID_CONFIG_KEY)
+        );
+
+        $response = $managementClient->getSearchEngine(Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY));
+
+        return $response->getBody()->jsonSerialize();
     }
 }
