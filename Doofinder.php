@@ -25,9 +25,10 @@ class Doofinder extends BaseModule
     public const DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY = 'doofinder_query_input_id';
 
     // Doofinder product state synchronize
-    public const DOOFINDER_STATE_CREATED = "created";
-    public const DOOFINDER_STATE_UPDATED = "updated";
-    public const DOOFINDER_STATE_DELETED = "deleted";
+    public const DOOFINDER_STATE_CREATED_UPDATED = 'created_update';
+    public const DOOFINDER_STATE_CREATED = 'created';
+    public const DOOFINDER_STATE_UPDATED = 'updated';
+    public const DOOFINDER_STATE_DELETED = 'deleted';
 
     /*
      * You may now override BaseModuleInterface methods, such as:
@@ -77,6 +78,16 @@ class Doofinder extends BaseModule
             if (version_compare($currentVersion, $file->getBasename('.sql'), '<')) {
                 $database->insertSql(null, [$file->getPathname()]);
             }
+        }
+    }
+
+    public function postActivation(ConnectionInterface $con = null): void
+    {
+        $database = new Database($con);
+
+        if (!self::getConfigValue('is_initialized', false)) {
+            $database->insertSql(null, [__DIR__ . "/Config/TheliaMain.sql"]);
+            self::setConfigValue('is_initialized', true);
         }
     }
 }

@@ -11,14 +11,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Controller\Admin\AdminController;
 use Thelia\Log\Tlog;
-use Thelia\Model\ProductSaleElementsQuery;
 use Thelia\Tools\URL;
 
 #[Route('/admin/module/Doofinder', name: 'admin_doofinder_api_')]
 class DoofinderApiController extends AdminController
 {
     public function __construct(
-        protected ApiDoofinderManagementService $service,
+        protected ApiDoofinderManagementService $apiDoofinderManagementService,
         protected DoofinderFormatService $formatService
     ) {}
 
@@ -28,9 +27,7 @@ class DoofinderApiController extends AdminController
         $sync = "success";
 
         try {
-            $productSaleElements = ProductSaleElementsQuery::create()->find();
-
-            $results = $this->service->createDoofinderProductInBulk($productSaleElements);
+            $results = $this->apiDoofinderManagementService->synchronizeDoofinderProducts();
 
             $this->formatService->formatResponse($results);
         } catch (ApiException|Exception $e) {

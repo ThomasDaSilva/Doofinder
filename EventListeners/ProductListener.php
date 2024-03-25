@@ -23,7 +23,6 @@ use Thelia\Model\Event\FeatureAvI18nEvent;
 use Thelia\Model\Event\FeatureEvent;
 use Thelia\Model\Event\FeatureI18nEvent;
 use Thelia\Model\Event\FeatureProductEvent;
-use Thelia\Model\Event\ProductCategoryEvent;
 use Thelia\Model\Event\ProductEvent;
 use Thelia\Model\Event\ProductI18nEvent;
 use Thelia\Model\Event\ProductImageEvent;
@@ -46,23 +45,15 @@ class ProductListener implements EventSubscriberInterface
      */
     public function createUpdateProduct(ActiveRecordEvent $event): void
     {
-        $results = [];
         $model = $event->getModel();
 
-        if (null !== $product = ProductQuery::create()->findOneById($model->getId())) {
+        if (null === $product = ProductQuery::create()->findOneById($model->getId())) {
             return;
         }
 
         try {
-            if ($product->getVisible() === 1) {
-                $results = $this->apiDoofinderManagementService->createDoofinderProductInBulk($product->getProductSaleElementss());
-            }
-
-            if ($product->getVisible() === 0) {
-                $results = $this->apiDoofinderManagementService->deleteDoofinderProductInBulk($product->getProductSaleElementss());
-            }
-
-            $this->formatService->formatResponse($results);
+            $results = $this->apiDoofinderManagementService->synchronizeDoofinderProducts($product->getId());
+            Tlog::getInstance()->info($this->formatService->formatResponse($results));
         } catch (ApiException $e) {
             Tlog::getInstance()->error($e->getMessage());
         }
@@ -73,7 +64,6 @@ class ProductListener implements EventSubscriberInterface
      */
     public function createUpdateProductPrice(ProductPriceEvent $event): void
     {
-        $results = [];
         $productPrice = $event->getModel();
 
         if (null === $pse = ProductSaleElementsQuery::create()->findOneById($productPrice->getProductSaleElementsId())) {
@@ -81,15 +71,15 @@ class ProductListener implements EventSubscriberInterface
         }
 
         try {
-            if ($pse->getProduct()->getVisible() === 1) {
-                $results = $this->apiDoofinderManagementService->createDoofinderProductInBulk([$pse]);
+            if ($pse->getProduct()->getVisible() === 1 && $pse->getProduct()->getDoofinderExcludedProduct() === null) {
+                $results = $this->apiDoofinderManagementService->addDoofinderProductSaleElementss($pse);
+                Tlog::getInstance()->info($this->formatService->formatAddedUpdatedResponse($results));
             }
 
-            if ($pse->getProduct()->getVisible() === 0) {
-                $results = $this->apiDoofinderManagementService->deleteDoofinderProductInBulk([$pse]);
+            if ($pse->getProduct()->getVisible() === 0 || $pse->getProduct()->getDoofinderExcludedProduct() !== null) {
+                $results = $this->apiDoofinderManagementService->deleteDoofinderProductSaleElementss($pse);
+                Tlog::getInstance()->info($this->formatService->formatDeletedResponse($results));
             }
-
-            $this->formatService->formatResponse($results);
         } catch (ApiException $e) {
             Tlog::getInstance()->error($e->getMessage());
         }
@@ -107,9 +97,8 @@ class ProductListener implements EventSubscriberInterface
         }
 
         try {
-            $results = $this->apiDoofinderManagementService->deleteDoofinderProductInBulk($product->getProductSaleElementss());
-
-            $this->formatService->formatResponse($results);
+            $results = $this->apiDoofinderManagementService->deleteDoofinderProducts($product->getId());
+            Tlog::getInstance()->info($this->formatService->formatDeletedResponse($results));
         } catch (ApiException $e) {
             Tlog::getInstance()->error($e->getMessage());
         }
@@ -127,9 +116,8 @@ class ProductListener implements EventSubscriberInterface
         }
 
         try {
-            $results = $this->apiDoofinderManagementService->deleteDoofinderProductInBulk([$pse]);
-
-            $this->formatService->formatResponse($results);
+            $results = $this->apiDoofinderManagementService->deleteDoofinderProductSaleElementss($pse);
+            Tlog::getInstance()->info($this->formatService->formatDeletedResponse($results));
         } catch (ApiException $e) {
             Tlog::getInstance()->error($e->getMessage());
         }
@@ -138,6 +126,7 @@ class ProductListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return array(
+            ProductEvent::POST_UPDATE => ["createUpdateProduct", 200],
             ProductEvent::POST_SAVE => ["createUpdateProduct", 200],
             ProductI18nEvent::POST_SAVE => ['createUpdateProduct', 200],
             ProductImageEvent::POST_SAVE => ['createUpdateProduct', 200],
@@ -157,7 +146,8 @@ class ProductListener implements EventSubscriberInterface
             CategoryI18nEvent::POST_SAVE => ['createUpdateProduct', 200],
 
             ProductPriceEvent::POST_SAVE  => ['createUpdateProductPrice', 200],
-            ProductCategoryEvent::POST_SAVE  => ['createUpdateProductPrice', 200],
+            //ProductCategoryEvent::POST_SAVE  => ['createUpdateProductPrice', 200],
+            //AttributeCombinationEvent::POST_SAVE => ['createUpdateProductPrice', 200],
 
             ProductEvent::POST_DELETE => ["deleteProduct", 200],
             ProductI18nEvent::POST_DELETE => ['deleteProduct', 200],
@@ -178,7 +168,8 @@ class ProductListener implements EventSubscriberInterface
             CategoryI18nEvent::POST_DELETE => ['deleteProduct', 200],
 
             ProductPriceEvent::POST_DELETE  => ['deleteProductPrice', 200],
-            ProductCategoryEvent::POST_DELETE  => ['deleteProductPrice', 200]
+            //ProductCategoryEvent::POST_DELETE  => ['deleteProductPrice', 200],
+            //AttributeCombinationEvent::POST_DELETE => ['deleteProductPrice', 200],
         );
     }
 }
