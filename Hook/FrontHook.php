@@ -25,6 +25,10 @@ class FrontHook extends BaseHook
 
     public static function getSubscribedHooks(): array
     {
+        if(null === Doofinder::getConfigValue(Doofinder::DOOFINDER_HOOK_SEARCH_SCRIPT_CONFIG_KEY)) {
+            return [];
+        }
+
         return [
             Doofinder::getConfigValue(Doofinder::DOOFINDER_HOOK_SEARCH_SCRIPT_CONFIG_KEY) => [
                 [
