@@ -2,7 +2,7 @@
     <div class="card-body">
         <div class="form-check form-switch">
             <input type="checkbox" class="form-check-input" id="doofinder-is-excluded"
-                   data-exclude-url="{{ path('admin_doofinder_excluded_product_exclude_product', {'id': product_id}) }}"
+                   data-exclude-url="{{ path('admin_doofinder_excluded_product_exclude_product', {'id': product_id}) }}?_token={{ assignToken() }}"
                    value="1" {{ is_excluded ? 'checked' }}>
             <label class="form-check-label" for="doofinder-is-excluded">
                 <strong>{{ 'Doofinder Search Engine'|trans({}, 'doofinder.bo.default') }}</strong><br>

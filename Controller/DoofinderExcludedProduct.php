@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\HttpFoundation\JsonResponse;
+use Thelia\Tools\TokenProvider;
 
 #[Route('/admin/doofinder/excluded/product', name: 'admin_doofinder_excluded_product_')]
 class DoofinderExcludedProduct extends BaseAdminController
@@ -25,11 +26,15 @@ class DoofinderExcludedProduct extends BaseAdminController
         ApiDoofinderManagementService $apiDoofinderManagementService,
         DoofinderFormatService $formatService,
         RequestStack $requestStack,
+        TokenProvider $tokenProvider,
         int $id
     ): JsonResponse
     {
+        $request = $requestStack->getCurrentRequest();
+        $tokenProvider->checkToken((string) $request->query->get('_token'));
+
         $jsonResponse = [];
-        $data = $requestStack->getCurrentRequest()->request->get('is_excluded');
+        $data = $request->request->get('is_excluded');
 
         if ($data === "true") {
             $jsonResponse['excluded'] = $doofinderExcludedProductService->excludeProduct($id);
