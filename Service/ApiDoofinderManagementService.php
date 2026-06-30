@@ -121,15 +121,35 @@ class ApiDoofinderManagementService
             }
 
             if ($type === Doofinder::DOOFINDER_STATE_DELETED) {
-                $productSaleElementss = ProductSaleElementsQuery::create()
+                // Keep the OR scoped inside id = $productId: the product must be the
+                // requested one AND (be hidden OR excluded from Doofinder). A chained
+                // _or() would turn the whole WHERE into an OR and leak globally
+                // excluded PSE into a single-product sync.
+                $hiddenSaleElements = ProductSaleElementsQuery::create()
                     ->useProductQuery()
                     ->filterById($productId)
                     ->filterByVisible(0)
-                    ->_or()
+                    ->endUse()
+                    ->find();
+
+                $excludedSaleElements = ProductSaleElementsQuery::create()
+                    ->useProductQuery()
+                    ->filterById($productId)
                     ->useDoofinderExcludedProductExistsQuery()
                     ->endUse()
                     ->endUse()
                     ->find();
+
+                $productSaleElementss = $hiddenSaleElements;
+                $seenSaleElementIds = [];
+                foreach ($hiddenSaleElements as $hiddenSaleElement) {
+                    $seenSaleElementIds[$hiddenSaleElement->getId()] = true;
+                }
+                foreach ($excludedSaleElements as $excludedSaleElement) {
+                    if (!isset($seenSaleElementIds[$excludedSaleElement->getId()])) {
+                        $productSaleElementss->append($excludedSaleElement);
+                    }
+                }
             }
         }
 
