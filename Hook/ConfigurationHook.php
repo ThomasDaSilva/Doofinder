@@ -18,9 +18,12 @@ class ConfigurationHook extends BaseHook
         try {
             $searchEngine = ApiDoofinderManagementService::getSearchEngine();
 
-            foreach ($searchEngine['indices'] as $indice) {
-                foreach ($indice['datasources'] as $datasource) {
-                    $indices[$indice['name']][] = $datasource['options']['url'];
+            foreach ($searchEngine['indices'] ?? [] as $indice) {
+                $indices[$indice['name']] ??= [];
+                foreach ($indice['datasources'] ?? [] as $datasource) {
+                    if (isset($datasource['options']['url'])) {
+                        $indices[$indice['name']][] = $datasource['options']['url'];
+                    }
                 }
             }
         } catch (\Throwable $e) {

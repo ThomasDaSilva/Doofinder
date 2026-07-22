@@ -106,7 +106,15 @@ class ApiDoofinderManagementService
             Doofinder::getConfigValue(Doofinder::DOOFINDER_USER_ID_CONFIG_KEY)
         );
 
-        $response = $managementClient->getSearchEngine(Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY));
+        // The Doofinder API no longer returns the "inactive" key: the SDK model accesses it
+        // without a guard, which promotes a warning to an ErrorException under Thelia dev mode.
+        // Silence warnings only around the SDK call so the response still parses.
+        set_error_handler(static fn (): bool => true, E_WARNING);
+        try {
+            $response = $managementClient->getSearchEngine(Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY));
+        } finally {
+            restore_error_handler();
+        }
 
         return $response->getBody()->jsonSerialize();
     }

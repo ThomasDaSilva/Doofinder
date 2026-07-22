@@ -167,12 +167,21 @@
                                 {/if}
 
                                 <div>
-                                    {intl l="URL product feeds" d='doofinder.bo.default'} :
+                                    {intl l="Search engine indices" d='doofinder.bo.default'} :
                                     <ul>
-                                    {foreach $feeds as $key => $feed}
-                                        {foreach $feed as $datasource}
-                                            <li><a href="{$datasource}">{$datasource}</a></li>
-                                        {/foreach}
+                                    {foreach $feeds as $indexName => $datasources}
+                                        <li>
+                                            {$indexName}
+                                            {if $datasources}
+                                                <ul>
+                                                {foreach $datasources as $datasource}
+                                                    <li><a href="{$datasource}">{$datasource}</a></li>
+                                                {/foreach}
+                                                </ul>
+                                            {/if}
+                                        </li>
+                                    {foreachelse}
+                                        <li>{intl l="No index found for this search engine" d='doofinder.bo.default'}</li>
                                     {/foreach}
                                     </ul>
                                 </div>
