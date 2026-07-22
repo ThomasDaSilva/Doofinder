@@ -59,6 +59,7 @@ class ConfigurationController extends AdminController
             Doofinder::setConfigValue(Doofinder::DOOFINDER_HOOK_SEARCH_SCRIPT_CONFIG_KEY, $data["hook_search_script"]);
             Doofinder::setConfigValue(Doofinder::DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY, (bool) $data["basic_search_bar"]);
             Doofinder::setConfigValue(Doofinder::DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY, $data["query_input_id"]);
+            Doofinder::setConfigValue(Doofinder::DOOFINDER_SEARCH_SCRIPT_CONFIG_KEY, $data["search_script"]);
 
             return $this->generateSuccessRedirect($form);
         } catch (FormValidationException $e) {

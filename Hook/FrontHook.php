@@ -14,10 +14,8 @@ class FrontHook extends BaseHook
             $this->render("hooks/hook-search-script.html",
                 [
                     'query_input_id' => Doofinder::getConfigValue(Doofinder::DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY),
-                    'hash_id' => Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY),
-                    'search_zone' => Doofinder::getConfigValue(Doofinder::DOOFINDER_SEARCH_ZONE_CONFIG_KEY),
-                    'lang' => $this->getLang()->getCode(),
-                    'basic_input' => Doofinder::getConfigValue(Doofinder::DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY)
+                    'basic_input' => Doofinder::getConfigValue(Doofinder::DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY),
+                    'search_script' => Doofinder::getConfigValue(Doofinder::DOOFINDER_SEARCH_SCRIPT_CONFIG_KEY),
                 ]
             )
         );

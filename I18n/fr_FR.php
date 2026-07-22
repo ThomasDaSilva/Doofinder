@@ -10,6 +10,8 @@ return array(
     'Hook Search Script' => 'Hook du script du moteur de recherche',
     'Id of the search Bar' => 'ID de la bar de recherche',
     'Search Zone' => 'Zone du serveur',
+    'Search script' => 'Script de recherche',
+    'Paste here the full Doofinder script provided in your Doofinder admin. It will be rendered as-is in the configured hook.' => 'Collez ici le script Doofinder complet fourni dans votre administration Doofinder. Il sera affiché tel quel dans le hook configuré.',
     'Server zone of your search engine' => 'zone du serveur de votre moteur de recherche',
     'Token User' => 'Token utilitateur',
     'Use real-time synchronization for your product ?' => 'Utiliser la synchronisation des produits en temps réel ?',

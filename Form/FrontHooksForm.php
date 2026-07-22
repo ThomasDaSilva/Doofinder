@@ -15,6 +15,19 @@ class FrontHooksForm extends BaseForm
     {
         $this->formBuilder
             ->add(
+                'search_script',
+                TextareaType::class, [
+                    'required' => false,
+                    'label' => Translator::getInstance()->trans('Search script', [], Doofinder::DOMAIN_NAME),
+                    'label_attr' => [
+                        'for' => 'search_script',
+                        'help' => Translator::getInstance()->trans('Paste here the full Doofinder script provided in your Doofinder admin. It will be rendered as-is in the configured hook.', [], Doofinder::DOMAIN_NAME),
+                        'rows' => 12,
+                    ],
+                    'data' => Doofinder::getConfigValue(Doofinder::DOOFINDER_SEARCH_SCRIPT_CONFIG_KEY)
+                ]
+            )
+            ->add(
                 'hook_search_script',
                 TextType::class, [
                     'required' => false,
