@@ -56,6 +56,7 @@
                                             </div>
                                             {render_form_field field='search_zone'}
                                             {render_form_field field='hash_id'}
+                                            {render_form_field field='index_name'}
 
                                             <button type="submit" class="btn btn-success" >{intl l="Save Configuration" d="doofinder.bo.default"}</button>
                                         </div>
@@ -138,9 +139,8 @@
                                             <div class="title">
                                                 {intl l="Doofinder Server configuration" d='doofinder.bo.default'}
                                             </div>
+                                            {render_form_field field='search_script'}
                                             {render_form_field field='hook_search_script'}
-                                            {render_form_field field='query_input_id'}
-                                            {render_form_field field='basic_search_bar'}
                                             <button type="submit" class="btn btn-success" >{intl l="Save Configuration" d="doofinder.bo.default"}</button>
                                         </div>
                                     </form>
@@ -165,12 +165,21 @@
                                 {/if}
 
                                 <div>
-                                    {intl l="URL product feeds" d='doofinder.bo.default'} :
+                                    {intl l="Search engine indices" d='doofinder.bo.default'} :
                                     <ul>
-                                    {foreach $feeds as $key => $feed}
-                                        {foreach $feed as $datasource}
-                                            <li><a href="{$datasource}">{$datasource}</a></li>
-                                        {/foreach}
+                                    {foreach $feeds as $indexName => $datasources}
+                                        <li>
+                                            {$indexName}
+                                            {if $datasources}
+                                                <ul>
+                                                {foreach $datasources as $datasource}
+                                                    <li><a href="{$datasource}">{$datasource}</a></li>
+                                                {/foreach}
+                                                </ul>
+                                            {/if}
+                                        </li>
+                                    {foreachelse}
+                                        <li>{intl l="No index found for this search engine" d='doofinder.bo.default'}</li>
                                     {/foreach}
                                     </ul>
                                 </div>

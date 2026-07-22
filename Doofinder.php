@@ -19,11 +19,12 @@ class Doofinder extends BaseModule
     public const DOOFINDER_HASH_ID_CONFIG_KEY = 'doofinder_hash_id';
     public const DOOFINDER_USER_TOKEN_CONFIG_KEY = 'doofinder_user_token';
     public const DOOFINDER_USER_ID_CONFIG_KEY = 'doofinder_user_id';
+    public const DOOFINDER_INDEX_NAME_CONFIG_KEY = 'doofinder_index_name';
+    public const DOOFINDER_DEFAULT_INDEX_NAME = 'products';
 
     // Doofinder Front Hooks
     public const DOOFINDER_HOOK_SEARCH_SCRIPT_CONFIG_KEY = 'doofinder_hook_search_script';
-    public const DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY = 'doofinder_basic_search_bar';
-    public const DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY = 'doofinder_query_input_id';
+    public const DOOFINDER_SEARCH_SCRIPT_CONFIG_KEY = 'doofinder_search_script';
 
     // Doofinder product state synchronize
     public const DOOFINDER_STATE_CREATED_UPDATED = 'created_update';

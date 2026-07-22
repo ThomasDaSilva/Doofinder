@@ -20,6 +20,8 @@ return array(
     'Save Configuration' => 'Enregistrer la configuration',
     'Save Parameters' => 'Enregistrer les paramètres',
     'Search Engine' => 'Moteur de recherche',
+    'Search engine indices' => 'Index du moteur de recherche',
+    'No index found for this search engine' => 'Aucun index trouvé pour ce moteur de recherche',
     'Server' => 'Serveur',
     'Status' => 'Statut',
     'Syncronization failed' => 'Synchronization échouée',

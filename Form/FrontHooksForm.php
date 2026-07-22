@@ -3,7 +3,6 @@
 namespace Doofinder\Form;
 
 use Doofinder\Doofinder;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Thelia\Core\Translation\Translator;
@@ -15,6 +14,19 @@ class FrontHooksForm extends BaseForm
     {
         $this->formBuilder
             ->add(
+                'search_script',
+                TextareaType::class, [
+                    'required' => false,
+                    'label' => Translator::getInstance()->trans('Search script', [], Doofinder::DOMAIN_NAME),
+                    'label_attr' => [
+                        'for' => 'search_script',
+                        'help' => Translator::getInstance()->trans('Paste here the full Doofinder script provided in your Doofinder admin. It will be rendered as-is in the configured hook.', [], Doofinder::DOMAIN_NAME),
+                        'rows' => 12,
+                    ],
+                    'data' => Doofinder::getConfigValue(Doofinder::DOOFINDER_SEARCH_SCRIPT_CONFIG_KEY)
+                ]
+            )
+            ->add(
                 'hook_search_script',
                 TextType::class, [
                     'required' => false,
@@ -24,26 +36,6 @@ class FrontHooksForm extends BaseForm
                         'help' => Translator::getInstance()->trans("hook of doofinder search script", [], Doofinder::DOMAIN_NAME),
                     ],
                     'data' => Doofinder::getConfigValue(Doofinder::DOOFINDER_HOOK_SEARCH_SCRIPT_CONFIG_KEY)
-                ]
-            )
-            ->add(
-                'query_input_id',
-                TextType::class, [
-                    'required' => false,
-                    'label' => Translator::getInstance()->trans('Id of the search Bar', [], Doofinder::DOMAIN_NAME),
-                    'label_attr' => [
-                        'for' => 'search_zone',
-                        'help' => Translator::getInstance()->trans("id of doofinder search bar", [], Doofinder::DOMAIN_NAME),
-                    ],
-                    'data' => Doofinder::getConfigValue(Doofinder::DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY)
-                ]
-            )
-            ->add(
-                'basic_search_bar',
-                CheckboxType::class, [
-                    'required' => false,
-                    'label' => Translator::getInstance()->trans('Add a basic html input for search', [], Doofinder::DOMAIN_NAME),
-                    'data' => (bool) Doofinder::getConfigValue(Doofinder::DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY)
                 ]
             )
         ;

@@ -37,6 +37,18 @@ class ConfigurationForm extends BaseForm
                 ]
             )
             ->add(
+                'index_name',
+                TextType::class, [
+                    'required' => true,
+                    'label' => Translator::getInstance()->trans('Index name', [], Doofinder::DOMAIN_NAME),
+                    'label_attr' => [
+                        'for' => 'index_name',
+                        'help' => Translator::getInstance()->trans("Name of the index that receives products, as defined in your Doofinder search engine (usually 'products')", [], Doofinder::DOMAIN_NAME),
+                    ],
+                    'data' => Doofinder::getConfigValue(Doofinder::DOOFINDER_INDEX_NAME_CONFIG_KEY, Doofinder::DOOFINDER_DEFAULT_INDEX_NAME)
+                ]
+            )
+            ->add(
                 'user_id',
                 TextType::class, [
                     'required' => true,
