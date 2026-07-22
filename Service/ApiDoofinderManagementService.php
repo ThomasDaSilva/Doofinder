@@ -69,7 +69,7 @@ class ApiDoofinderManagementService
 
         $response = $this->managementClient->createItemsInBulk(
             Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY),
-            "product",
+            Doofinder::getConfigValue(Doofinder::DOOFINDER_INDEX_NAME_CONFIG_KEY, Doofinder::DOOFINDER_DEFAULT_INDEX_NAME),
             $itemParams
         );
 
@@ -83,7 +83,7 @@ class ApiDoofinderManagementService
     {
         $response = $this->managementClient->deleteItemsInBulk(
             Doofinder::getConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY),
-            "product",
+            Doofinder::getConfigValue(Doofinder::DOOFINDER_INDEX_NAME_CONFIG_KEY, Doofinder::DOOFINDER_DEFAULT_INDEX_NAME),
             $itemParams
         );
 

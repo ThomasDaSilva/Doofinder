@@ -7,6 +7,8 @@ return array(
     'Dfscore priority' => 'Dfscore',
     'Hash ID' => 'Hash ID',
     'Hash ID of your search engine' => 'hash ID de votre moteur de recherche',
+    'Index name' => 'Nom de l\'index',
+    "Name of the index that receives products, as defined in your Doofinder search engine (usually 'products')" => 'Nom de l\'index qui reçoit les produits, tel que défini dans votre moteur de recherche Doofinder (généralement « products »)',
     'Hook Search Script' => 'Hook du script du moteur de recherche',
     'Id of the search Bar' => 'ID de la bar de recherche',
     'Search Zone' => 'Zone du serveur',

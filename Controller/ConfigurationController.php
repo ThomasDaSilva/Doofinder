@@ -30,6 +30,7 @@ class ConfigurationController extends AdminController
 
             Doofinder::setConfigValue(Doofinder::DOOFINDER_SEARCH_ZONE_CONFIG_KEY, $data["search_zone"]);
             Doofinder::setConfigValue(Doofinder::DOOFINDER_HASH_ID_CONFIG_KEY, $data["hash_id"]);
+            Doofinder::setConfigValue(Doofinder::DOOFINDER_INDEX_NAME_CONFIG_KEY, $data["index_name"]);
             Doofinder::setConfigValue(Doofinder::DOOFINDER_USER_ID_CONFIG_KEY, $data["user_id"]);
             Doofinder::setConfigValue(Doofinder::DOOFINDER_USER_TOKEN_CONFIG_KEY, $data["user_token"]);
 
