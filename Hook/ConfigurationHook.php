@@ -4,7 +4,6 @@ namespace Doofinder\Hook;
 
 use Doofinder\Doofinder;
 use Doofinder\Service\ApiDoofinderManagementService;
-use Doofinder\Shared\Exceptions\ApiException;
 use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Hook\BaseHook;
 use Thelia\Log\Tlog;
@@ -24,7 +23,7 @@ class ConfigurationHook extends BaseHook
                     $indices[$indice['name']][] = $datasource['options']['url'];
                 }
             }
-        } catch (ApiException $e) {
+        } catch (\Throwable $e) {
             Tlog::getInstance()->error($e->getMessage());
         }
 
