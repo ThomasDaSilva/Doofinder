@@ -24,8 +24,6 @@ class Doofinder extends BaseModule
 
     // Doofinder Front Hooks
     public const DOOFINDER_HOOK_SEARCH_SCRIPT_CONFIG_KEY = 'doofinder_hook_search_script';
-    public const DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY = 'doofinder_basic_search_bar';
-    public const DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY = 'doofinder_query_input_id';
     public const DOOFINDER_SEARCH_SCRIPT_CONFIG_KEY = 'doofinder_search_script';
 
     // Doofinder product state synchronize

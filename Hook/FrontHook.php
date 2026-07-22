@@ -13,8 +13,6 @@ class FrontHook extends BaseHook
         $event->add(
             $this->render("hooks/hook-search-script.html",
                 [
-                    'query_input_id' => Doofinder::getConfigValue(Doofinder::DOOFINDER_QUERY_INPUT_ID_CONFIG_KEY),
-                    'basic_input' => Doofinder::getConfigValue(Doofinder::DOOFINDER_BASIC_SEARCH_BAR_CONFIG_KEY),
                     'search_script' => Doofinder::getConfigValue(Doofinder::DOOFINDER_SEARCH_SCRIPT_CONFIG_KEY),
                 ]
             )
