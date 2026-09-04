@@ -64,6 +64,8 @@ class DoofinderFormatService
             'image_link' => $this->getImageLink($product),
             'link' => $this->getProductLink($product, $locale),
             'mpn' => $product->getRef(),
+            'reference' => $product->getRef(),
+            'variant_references' => $this->getVariantReferences($product),
             'df_manual_boost' => (float)$dfscore,
             'best_price' => (string)$this->getProductPrice($product, $product->getTaxRule(), true),
             'sale_price' => (string)$this->getProductPrice($product, $product->getTaxRule()),
@@ -203,6 +205,23 @@ class DoofinderFormatService
     private function getProductLink(Product $product, string $locale): ?string
     {
         return URL::getInstance()->absoluteUrl($product->getRewrittenUrl($locale));
+    }
+
+    /**
+     * @throws PropelException
+     */
+    private function getVariantReferences(Product $product): array
+    {
+        $references = [];
+
+        foreach ($product->getProductSaleElementss() as $productSaleElements) {
+            $reference = $productSaleElements->getRef();
+            if ($reference !== null && $reference !== '') {
+                $references[] = $reference;
+            }
+        }
+
+        return array_values(array_unique($references));
     }
     private function getLocale(): ?string
     {
