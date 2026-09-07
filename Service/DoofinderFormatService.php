@@ -79,7 +79,7 @@ class DoofinderFormatService
             $ref = $productSaleElements->getRef();
             $items[] = $shared + [
                 'id' => (string)$productSaleElements->getId(),
-                'link' => $this->buildVariantLink($baseLink, $ref, $hasVariants),
+                'link' => $this->buildVariantLink($baseLink, (string)$productSaleElements->getId(), $hasVariants),
                 'mpn' => $ref,
                 'reference' => $ref,
             ];
@@ -225,15 +225,15 @@ class DoofinderFormatService
         return URL::getInstance()->absoluteUrl($product->getRewrittenUrl($locale));
     }
 
-    private function buildVariantLink(?string $baseLink, ?string $ref, bool $hasVariants): ?string
+    private function buildVariantLink(?string $baseLink, ?string $variantKey, bool $hasVariants): ?string
     {
-        if ($baseLink === null || !$hasVariants || $ref === null || $ref === '') {
+        if ($baseLink === null || !$hasVariants || $variantKey === null || $variantKey === '') {
             return $baseLink;
         }
 
         $separator = str_contains($baseLink, '?') ? '&' : '?';
 
-        return $baseLink.$separator.'declinaison='.rawurlencode($ref);
+        return $baseLink.$separator.'declinaison='.rawurlencode($variantKey);
     }
 
     /**
